@@ -3,7 +3,7 @@ from locale import getlocale
 from uuid import UUID, uuid4
 from datetime import datetime, UTC
 
-from .common import SessionProvider
+from ...common import SessionProvider
 
 from requests import Session
 

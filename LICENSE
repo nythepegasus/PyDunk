@@ -1,13 +1,19 @@
+PERSONAL USE LICENSE (MIT) - Non-commercial Use Only
+
+This license is strictly for personal, non-commercial use. Commercial use of this software, including private or internal business use, is prohibited without a separate commercial license.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, and/or distribute copies of the Software, subject to the following conditions:
+
 MIT License
 
-Copyright (c) [year] [fullname]
+Copyright (c) 2025 nythepegasus
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+to use, copy, modify, merge, publish, and/or distribute copies of the Software, 
+and to permit persons to whom the Software is furnished to do so, 
+subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
@@ -19,3 +25,26 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+COMMERCIAL USE LICENSE
+
+This software is licensed for personal, non-commercial use only under the Personal Use License (MIT). Commercial use, which includes use by businesses, corporations, organizations, or any revenue-generating entities, requires a separate commercial license.
+ - An example of a prohibited usage is within software that uses (donations as) paywalls of their software.
+
+Permission for commercial use may be granted under the following conditions:
+
+1. **License Scope**:
+   - The software may not be used, modified, distributed, or incorporated into any commercial product or service without prior written consent from the licensor.
+   - This includes any private or internal business use within a commercial entity, regardless of whether the software is distributed externally.
+
+2. **Attribution and Licensing Fees**:
+   - Licensed entities must provide attribution to the original author, retaining copyright notices in any documentation or marketing materials.
+   - Depending on the scope of commercial use, licensing fees or royalties may apply, as outlined in a separate commercial license agreement.
+
+3. **Prohibition of Sub-licensing**:
+   - Licensed commercial entities may not sub-license or transfer the software or modifications thereof without written approval from the licensor.
+
+4. **No Warranty**:
+   - The software is provided "as is," without any warranty, to the extent permitted by applicable law.
+
+For commercial licensing inquiries, please contact nythepegasus.

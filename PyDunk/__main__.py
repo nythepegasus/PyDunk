@@ -1,13 +1,15 @@
 from pprint import pp
 
 from .auth import GSAuth
-from .anisette import Anisette
-from .models import GSAuthToken, GSAuthTokens
+from .auth.models.anisette import Anisette
+from .auth.models import GSAuthToken, GSAuthTokens
+from .xcode.models import XcodeAuth
+from .xcode import XcodeSession
 
 from requests import Response
 
 
-def main() -> tuple[GSAuth, dict | tuple[dict, Response | None]]:
+def main() -> tuple[GSAuth, XcodeAuth | tuple]:
     import os
     from getpass import getpass
     username = os.environ.get("APPLE_ID")
@@ -26,7 +28,8 @@ def parse_tokens(data: dict):
     for k, v in data.items():
         print(f"{k}: {v['expiry']}\n{v['token']}")
 
-tokens = m[1]['t'] if isinstance(m[1], dict) else m[1][0]['t']
+#tokens = 
 #parse_tokens(tokens)
 
-x = m[1][1]
+if isinstance(m[1], XcodeAuth):
+    x = XcodeSession(m[1])

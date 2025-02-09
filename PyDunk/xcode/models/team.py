@@ -1,6 +1,9 @@
 from enum import Enum
 
+from ...common import SessionProvider
+from .auth import XcodeAuth
 from .account import Account
+from .device import Device
 
 
 class TeamKind(Enum):
@@ -25,6 +28,7 @@ class TeamKind(Enum):
                 return cls.FREE
             return cls.INDIVIDUAL
         return cls.UNKNOWN
+
 
 class Team:
     def __init__(

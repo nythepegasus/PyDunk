@@ -1,5 +1,9 @@
 from enum import Enum
+from datetime import datetime
 
+from ...common import SessionProvider
+
+import arrow
 
 
 class DeviceKind(Enum):
@@ -17,27 +21,54 @@ class DeviceKind(Enum):
         elif s == "watch": return cls.WATCH
         return cls.UNKNOWN
 
+
 class Device:
+    """
+dict_keys(['addedDate', 'name', 'deviceClass', 'model', 'udid', 'platform', 'responseId', 'status'])
+    """
     def __init__(
         self,
         device_id: str,
         name: str,
         udid: str,
-        kind: DeviceKind,
+        added: arrow.Arrow,
+        status: bool,
+        platform: str,
+        device_class: str,
+        model: str,
     ):
         self.device_id = device_id
         self.name = name
         self.udid = udid
-        self.kind = kind
+        self.added = added
+        self.platform = platform
+        self.device_class = device_class
+        self.model = model
+        self.status = status
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.name!r}, {self.udid!r}, {self.kind!r})"
+        return f"{self.__class__.__name__}(" + \
+               f"{self.device_id!r}, "       + \
+               (f"{self.name!r}, " if 'SUB' not in self.name else f"'REDACTED', ")            + \
+               (f"{self.udid!r}, " if 'SUB' not in self.name else f"'REDACTED', ")            + \
+               f"{self.added!r}, "           + \
+               f"{self.status!r}, "          + \
+               f"{self.platform!r}, "        + \
+               f"{self.device_class!r}, "    + \
+               f"{self.model!r}"             + \
+               ")"
 
     @classmethod
     def from_api(cls, data: dict):
         return cls(
-            data['deviceId'],
-            data['name'],
-            data['deviceNumber'],
-            DeviceKind.from_str(data['deviceClass'])
+            data['id'],
+            data['attributes']['name'],
+            data['attributes']['udid'],
+            arrow.get(data['attributes']['addedDate']),
+            data['attributes']['status'],
+            data['attributes']['platform'],
+            data['attributes']['deviceClass'],
+            data['attributes']['model'],
         )
+
+
