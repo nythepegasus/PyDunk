@@ -3,12 +3,11 @@ from locale import getlocale
 from uuid import UUID, uuid4
 from datetime import datetime, UTC
 
-from ...common import SessionProvider
-
+from requests.auth import AuthBase
 from requests import Session
 
 
-class Anisette(SessionProvider):
+class Anisette(AuthBase):
     """
     Anisette is required for authenticating with GrandSlam
     as well as communicating with most of Apple's APIs.
@@ -24,7 +23,7 @@ class Anisette(SessionProvider):
         device: UUID | None = None,
         session: Session | None = None,
     ):
-        super().__init__(session)
+        self._session = session if isinstance(session, Session) else Session()
 
         self.url = url
         self._serial = serial
@@ -42,8 +41,12 @@ class Anisette(SessionProvider):
     def __repr__(self):
         return f"Anisette({self.url!r}{", " + "'" + self._serial + "'" if self._serial is not None else ""})"
 
+    def __call__(self, r):
+        r.headers.update(self.headers)
+        return r
+
     def _get_data(self) -> dict:
-        self._data = self._session.get(self.url, verify=False).json()
+        self._data = self._session.get(self.url).json() #, verify=False).json()
         self._last = datetime.now()
         return self._data
 
@@ -110,8 +113,9 @@ class Anisette(SessionProvider):
     def client(self):
         return self.build_client("MacPro5,1", "Xcode")
 
-    def headers(self, client: bool = False) -> dict[str, str]:
-        h = {
+    @property
+    def headers(self) -> dict[str, str]:
+        return {
             "X-Apple-I-Client-Time": self.timestamp,
             "X-Apple-I-TimeZone": self.timezone,
             "loc": self.locale,
@@ -121,15 +125,11 @@ class Anisette(SessionProvider):
             "X-Apple-I-MD-M": self.machine,
             "X-Apple-I-MD-RINFO": self.router,
             "X-Mme-Device-Id": self.local_user,
-            "X-Apple-I-SRL-NO": self.serial
+            "X-Apple-I-SRL-NO": self.serial,
+            "X-Mme-Client-Info": self.client,
+            "X-Apple-App-Info": "com.apple.gs.xcode.auth",
+            "X-Xcode-Version": "16.0 (16A242d}",
         }
-        if client:
-            h |= {
-                "X-Mme-Client-Info": self.client,
-                "X-Apple-App-Info": "com.apple.gs.xcode.auth",
-                "X-Xcode-Version": "16.0 (16A242d}"
-            }
-        return h
 
     @property
     def cpd(self) -> dict[str, str]:
@@ -140,5 +140,5 @@ class Anisette(SessionProvider):
             "prkgen": True,
             "svct": "iCloud"
         }
-        return cpd | self.headers()
+        return cpd | self.headers
 

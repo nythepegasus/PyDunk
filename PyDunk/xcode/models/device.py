@@ -1,7 +1,4 @@
 from enum import Enum
-from datetime import datetime
-
-from ...common import SessionProvider
 
 import arrow
 
@@ -70,5 +67,9 @@ dict_keys(['addedDate', 'name', 'deviceClass', 'model', 'udid', 'platform', 'res
             data['attributes']['deviceClass'],
             data['attributes']['model'],
         )
+
+    @classmethod
+    def list_from_api(cls, data: list[dict]) -> "list[Device]":
+        return [cls.from_api(d) for d in data]
 
 

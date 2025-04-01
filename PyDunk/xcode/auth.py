@@ -1,13 +1,13 @@
+import plistlib as plist
 from uuid import uuid4
 
-from ...auth.models.gstokens import GSAuthToken
-from ...auth.models.anisette import Anisette
+from ..auth.models.anisette import Anisette
+from ..auth.models.gstokens import GSAuthToken
+
+from requests.auth import AuthBase
 
 
-class XcodeAuth:
-    BASE_URL = "https://developerservices2.apple.com/services/QH65B2/"
-    SERVICES_BASE_URL = "https://developerservices2.apple.com/services/v1/"
-
+class XcodeAuth(AuthBase):
     def __init__(
         self,
         dsid: str,
@@ -25,9 +25,13 @@ class XcodeAuth:
                f"{self.token!r}, " + \
                f"{self.anisette!r})"
 
+    def __call__(self, r):
+        r.headers.update(self.headers)
+        return r
+
     @property
     def headers(self) -> dict[str, str]:
-        return self.anisette.headers(True) | {
+        return self.anisette.headers | {
             "User-Agent": "Xcode",
             "Accept-Language": "en-us",
             "X-Apple-I-Identity-Id": self.dsid,
@@ -39,6 +43,10 @@ class XcodeAuth:
         return {
             "clientId": "XABBG36SBA",
             "protocolVersion": "A1234",
-            "requestId": str(uuid4()).upper(),
+            "requestId": str(uuid4()),
         }
+
+    @property
+    def plist_body(self) -> bytes:
+        return plist.dumps(self.body)
 

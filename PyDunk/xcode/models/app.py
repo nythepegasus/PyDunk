@@ -66,6 +66,10 @@ class AppID:
         features = {feature: all_features[feature] for feature in enabled_features}
         expiration = data['expirationDate'] if 'expirationDate' in data else None
         return cls(name, identifier, bundle, expiration, features)
+    
+    @classmethod
+    def list_from_api(cls, data: dict):
+        return [cls.from_api(d) for d in data['appIds']]
 
 
 class AppGroup:
@@ -96,3 +100,4 @@ class AppGroup:
             data['prefix'],
             data['identifier']
         )
+

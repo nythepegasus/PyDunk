@@ -23,6 +23,7 @@ dependencies = [
   "srp",
   "pbkdf2",
   "requests",
+  "arrow",
 ]
 
 [project.urls]
