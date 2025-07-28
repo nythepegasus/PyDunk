@@ -12,7 +12,7 @@ def pp(obj, width: int = 0, *args, **kwargs):
     width = shutil.get_terminal_size((120, 80)).columns if width == 0 else width
     _pp(obj, *args, **kwargs, width=width)
 
-from .utils.anisette import Anisette, AniV3Sync, to_dict, from_dict, from_file, to_file
+from .utils.anisette import Anisette, AniV3Sync, to_dict, from_dict, from_file
 from .auth import GSUserAuth, GSAuthSync
 from .xcode.session import XcodeAPI
 
@@ -44,18 +44,15 @@ def xcode_cli(ctx, config, anisette, email, password):
                 ani = from_file(anisette)
             except FileNotFoundError:
                 ani = AniV3Sync(MAIN_ANI)
-                to_file(anisette, ani)
             email = questionary.text("Email: ").skip_if(email is not None, email).ask()
             password = questionary.password("Password: ").skip_if(password is not None, password).ask()
         if any(d == None for d in [ani, email, password]): return
         ctx.obj['x'] = XcodeAPI.from_gsauth(GSAuthSync(GSUserAuth(email, password, Anisette(ani.url, ani))), verify=False) # type: ignore
     except FileNotFoundError:
-        anisette = questionary.path("Which anisette config should be used?").skip_if(anisette is not None, anisette).ask()
         try:
             ani = from_file(anisette)
         except FileNotFoundError:
             ani = AniV3Sync(MAIN_ANI)
-            to_file(anisette, ani)
         email = questionary.text("Email: ").skip_if(email is not None, email).ask()
         password = questionary.password("Password: ").skip_if(password is not None, password).ask()
         if any(d == None for d in [ani, email, password]): return

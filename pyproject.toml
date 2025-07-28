@@ -26,6 +26,7 @@ dependencies = [
   "httpx",
   "click",
   "questionary",
+  "python-socks",
 ]
 
 [project.urls]
