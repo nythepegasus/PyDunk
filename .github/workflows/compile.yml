@@ -40,6 +40,7 @@ jobs:
       - name: Install Dependencies and Build sdist
         run: |
           pip install -e .
+          pip install hatchling
           python -m hatchling build # create the sdist build to populate the __version__ var
 
       # Build python script into a standalone exe
