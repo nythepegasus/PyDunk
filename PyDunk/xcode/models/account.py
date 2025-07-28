@@ -1,20 +1,29 @@
 
-
 class Account:
+    __slots__ = ('_data', 'email', 'status', 'lfirst', 'llast', 'first', 'last', 'developer_id', 'person_id',)
+
     def __init__(
         self,
-        apple_id: str,
-        identifier: int,
+        email: str,
+        status: str,
+        lfirst: str,
+        llast: str,
         first: str,
         last: str,
+        developer_id: str,
+        person_id: int,
     ):
-        self.apple_id = apple_id
-        self.identifier = identifier
+        self.email = email
+        self.status = status
+        self.lfirst = lfirst
+        self.llast = llast
         self.first = first
         self.last = last
+        self.developer_id = developer_id
+        self.person_id = person_id
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.apple_id!r}, {self.identifier!r}, {self.first!r}, {self.last!r})"
+        return f"{self.__class__.__name__}({self.email!r}, {self.status!r}, {self.person_id!r}, {self.first!r}, {self.last!r})"
 
     @property
     def name(self):
@@ -22,9 +31,16 @@ class Account:
 
     @classmethod
     def from_api(cls, data: dict):
-        return cls(
+        c = cls(
             data['email'],
-            data['personId'],
+            data['developerStatus'],
+            data['firstName'],
+            data['lastName'],
             data['dsFirstName'] if isinstance(data['dsFirstName'], str) else data['firstName'],
             data['dsLastName'] if isinstance(data['dsLastName'], str) else data['lastName'],
+            data['developerId'],
+            data['personId'],
         )
+        c._data = data
+        return c
+

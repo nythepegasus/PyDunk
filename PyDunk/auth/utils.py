@@ -13,13 +13,6 @@ from cryptography.hazmat.primitives.padding import PKCS7 as padPKCS7
 rfc5054_enable()
 no_username_in_x()
 
-def check_error(r: dict) -> bool:
-    status = r["Status"] if "Status" in r else r
-    if status["ec"] != 0:
-        print(f"Error {status['ec']}: {status['em']}")
-        return True
-    return False
-
 def encrypt_password(password: str, salt: bytes, iterations: int) -> bytes:
     p = sha256(password.encode("utf-8")).digest()
     return PBKDF2(p, salt, iterations, sha256).read(32)

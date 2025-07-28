@@ -1,14 +1,12 @@
+import json
 from base64 import b64encode
 from locale import getlocale
-from uuid import UUID, uuid4
 from datetime import datetime, UTC
 
-from .common import SessionProvider
-
-from requests import Session
+from anisettev3 import AnisetteV3SyncClient as AniV3Sync, AnisetteV3AsyncClient as AniV3Async
 
 
-class Anisette(SessionProvider):
+class Anisette:
     """
     Anisette is required for authenticating with GrandSlam
     as well as communicating with most of Apple's APIs.
@@ -19,22 +17,15 @@ class Anisette(SessionProvider):
     def __init__(
         self,
         url: str = "https://ani.sidestore.io",
-        serial: str | None = None,
-        user: UUID | None = None,
-        device: UUID | None = None,
-        session: Session | None = None,
+        session: AniV3Sync | None = None,
     ):
-        super().__init__(session)
+        self._session = session if session is not None else AniV3Sync(url)
 
         self.url = url
-        self._serial = serial
+        self._serial = self._session.get_headers()['X-Apple-I-SRL-NO']
 
-        self.user_id = str(user).upper() \
-                       if user is UUID \
-                       else str(uuid4()).upper()
-        self.device_id = str(device).upper() \
-                         if device is UUID \
-                         else str(uuid4()).upper()
+        self.user_id = self._session.get_headers()['X-Apple-I-MD-LU']
+        self.device_id = self._session.get_headers()['X-Mme-Device-Id']
 
         self._data = None
         self._last = None
@@ -43,7 +34,7 @@ class Anisette(SessionProvider):
         return f"Anisette({self.url!r}{", " + "'" + self._serial + "'" if self._serial is not None else ""})"
 
     def _get_data(self) -> dict:
-        self._data = self._session.get(self.url, verify=False).json()
+        self._data = self._session.get_headers()
         self._last = datetime.now()
         return self._data
 
@@ -108,9 +99,10 @@ class Anisette(SessionProvider):
 
     @property
     def client(self):
-        return self.build_client("MacPro5,1", "Xcode")
+        return self.data['X-Mme-Client-Info'] if 'X-Mme-Client-Info' in self.data else self.build_client("MacPro5,1", "Xcode")
 
-    def headers(self, client: bool = False) -> dict[str, str]:
+    @property
+    def headers(self) -> dict[str, str]:
         h = {
             "X-Apple-I-Client-Time": self.timestamp,
             "X-Apple-I-TimeZone": self.timezone,
@@ -121,13 +113,10 @@ class Anisette(SessionProvider):
             "X-Apple-I-MD-M": self.machine,
             "X-Apple-I-MD-RINFO": self.router,
             "X-Mme-Device-Id": self.local_user,
-            "X-Apple-I-SRL-NO": self.serial
-        }
-        if client:
-            h |= {
-                "X-Mme-Client-Info": self.client,
-                "X-Apple-App-Info": "com.apple.gs.xcode.auth",
-                "X-Xcode-Version": "16.0 (16A242d}"
+            "X-Apple-I-SRL-NO": self.serial,
+            "X-Mme-Client-Info": self.client,
+            "X-Apple-App-Info": "com.apple.gs.xcode.auth",
+            "X-Xcode-Version": "16.0 (16A242d}"
             }
         return h
 
@@ -140,5 +129,36 @@ class Anisette(SessionProvider):
             "prkgen": True,
             "svct": "iCloud"
         }
-        return cpd | self.headers()
+        return cpd | self.headers
+
+
+def from_dict(d: dict, cl: type[AniV3Sync] | type[AniV3Async] = AniV3Sync) -> AniV3Sync | AniV3Async:
+    return cl(
+        d['url'],
+        d['client_info'],
+        d['user_agent'],
+        d['serial'],
+        d['localUserID'],
+        d['deviceID'],
+        d['adiPB']
+    )
+
+def to_dict(client: AniV3Sync | AniV3Async) -> dict:
+    return {
+        "url": str(client.url),
+        "client_info": client.client_info,
+        "user_agent": client.user_agent,
+        "serial": client.serial,
+        "localUserID": client.local_user,
+        "deviceID": client.device,
+        "adiPB": client.adipb
+    }
+
+def from_file(name: str, cl: type[AniV3Sync] | type[AniV3Async] = AniV3Sync) -> AniV3Sync | AniV3Async:
+    with open(name, 'r') as f:
+        return from_dict(json.load(f), cl)
+
+def to_file(name: str, client: AniV3Sync | AniV3Async):
+    with open(name, "w") as f:
+        json.dump(to_dict(client), f, indent=2)
 
