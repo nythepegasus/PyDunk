@@ -17,6 +17,7 @@
 # nuitka-project-if: {OS} == "Darwin":
 #    nuitka-project: --output-filename=PyDunk-mac-arm64.bin
 
+# nuitka-project: --no-deployment-flag=self-execution
 # nuitka-project: --report=build/compilation-report.xml
 
 from PyDunk import cli
