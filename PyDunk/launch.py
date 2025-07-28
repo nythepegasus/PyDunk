@@ -15,7 +15,7 @@
 #    nuitka-project: --include-module=jinxed.terminfo.ansicon
 #    nuitka-project: --include-module=jinxed.terminfo.xterm
 #    nuitka-project: --include-module=jinxed.terminfo.xterm_256color
-#    nuitka-project: --user-package-configuration-file=sidejitserver-nuitka-package.config.yml
+#    nuitka-project: --user-package-configuration-file=pydunk-nuitka-package.config.yml
 # nuitka-project-if: {OS} == "Linux":
 #    nuitka-project: --output-filename=PyDunk-linux-x86_64.bin
 # nuitka-project-if: {OS} == "Darwin":
